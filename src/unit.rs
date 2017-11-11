@@ -34,7 +34,7 @@ pub enum Unit {
     /// Farad
     F,
 
-    /// Herz
+    /// Hertz
     Hz,
 
     /// seconds
