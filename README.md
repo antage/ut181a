@@ -12,7 +12,8 @@ API documentation: https://docs.rs.ut181a
 ## Building
 
 ```
-cargo build
+$ sudo apt-get install libusb-1.0-0-dev
+$ cargo build
 ```
 
 ## Usage
