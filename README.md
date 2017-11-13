@@ -5,7 +5,17 @@
 Uni-T UT181A digital multimeter (DMM) remote control library.
 It supports USB connection only.
 
-# Usage
+## Documentation
+
+API documentation: https://docs.rs.ut181a
+
+## Building
+
+```
+cargo build
+```
+
+## Usage
 
 ``` rust
 extern ut181a;
@@ -23,3 +33,9 @@ fn main() {
     dmm.monitor_off().unwrap();
 }
 ```
+
+## License
+
+This library licensed under the following:
+
+* MIT License ([LICENSE](LICENSE) or http://opensource.org/licenses/MIT)
