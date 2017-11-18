@@ -2,11 +2,8 @@ use chrono::{NaiveDate, NaiveDateTime};
 
 use error::*;
 
-pub(crate) fn read_stringz<'a>(data: &'a [u8]) -> String {
-    let zestr: Vec<u8> = data.into_iter()
-        .map(|b| *b)
-        .take_while(|b| *b != 0)
-        .collect();
+pub(crate) fn read_stringz(data: &[u8]) -> String {
+    let zestr: Vec<u8> = data.into_iter().cloned().take_while(|&b| b != 0).collect();
     String::from_utf8_lossy(&zestr).into_owned()
 }
 

@@ -70,11 +70,7 @@ impl UnitExp {
                 unit: Unit::VDC,
                 exponent: -3,
             }),
-            "VDC" => Ok(UnitExp {
-                unit: Unit::VDC,
-                exponent: 0,
-            }),
-            "V" => Ok(UnitExp {
+            "VDC" | "V" => Ok(UnitExp {
                 unit: Unit::VDC,
                 exponent: 0,
             }),
@@ -220,8 +216,7 @@ impl fmt::Display for UnitExp {
             Unit::AAC => "AAC",
             Unit::AAcDc => "Aac+dc",
             Unit::Celsius => "C",
-            Unit::Fahrenheit => "F",
-            Unit::F => "F",
+            Unit::Fahrenheit | Unit::F => "F",
             Unit::Hz => "Hz",
             Unit::s => "s",
             Unit::Percent => "%",

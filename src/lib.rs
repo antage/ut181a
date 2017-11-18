@@ -276,16 +276,16 @@ impl<'a> Dmm<'a> {
                 return Ok(items);
             }
             items.extend(raw_items.into_iter().map(
-                |(overload_neg, overload_pos, value, precision, timestamp)| {
+                |item: message::RawRecordDataItem| {
                     RecordDataItem {
                         value: Value {
-                            overload_neg,
-                            overload_pos,
-                            value: value,
-                            precision: Some(precision),
+                            overload_neg: item.overload_neg,
+                            overload_pos: item.overload_pos,
+                            value: item.value,
+                            precision: Some(item.precision),
                             unit: info.unit,
                         },
-                        timestamp,
+                        timestamp: item.timestamp,
                     }
                 },
             ));
@@ -456,7 +456,7 @@ impl<'a> Dmm<'a> {
         }
     }
 
-    fn wait_record_data(&mut self) -> Result<Vec<(bool, bool, f32, usize, NaiveDateTime)>> {
+    fn wait_record_data(&mut self) -> Result<Vec<message::RawRecordDataItem>> {
         let now = Instant::now();
         loop {
             if now.elapsed() > Duration::from_millis(WAIT_TIMEOUT) {

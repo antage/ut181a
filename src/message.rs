@@ -27,7 +27,16 @@ pub(crate) enum Message {
     Save(NaiveDateTime, Measurement),
     Reply(Vec<u8>),
     RecordInfo(RecordInfo),
-    RecordData(Vec<(bool, bool, f32, usize, NaiveDateTime)>),
+    RecordData(Vec<RawRecordDataItem>),
+}
+
+#[derive(Clone, Debug)]
+pub(crate) struct RawRecordDataItem {
+    pub(crate) overload_neg: bool,
+    pub(crate) overload_pos: bool,
+    pub(crate) value: f32,
+    pub(crate) precision: usize,
+    pub(crate) timestamp: NaiveDateTime,
 }
 
 impl Message {
@@ -58,9 +67,15 @@ impl Message {
                     let value = LittleEndian::read_f32(&data[offset..]);
                     let precision = usize::from(data[offset + 4] >> 4);
                     let timestamp = read_datetime(&data[(offset + 5)..])?;
-                    items.push((overload_neg, overload_pos, value, precision, timestamp));
+                    items.push(RawRecordDataItem {
+                        overload_neg,
+                        overload_pos,
+                        value,
+                        precision,
+                        timestamp,
+                    });
                 }
-                return Ok(Message::RecordData(items));
+                Ok(Message::RecordData(items))
             }
             0x72 => {
                 let mut vec = Vec::with_capacity(data.len() - 1);
