@@ -17,3 +17,6 @@ cp211x_uart = "^0.1.3"
 error-chain = "^0.11.0"
 hidapi = "^0.4.1"
 nom = "^3.2.0"
+
+[badges]
+travis-ci = { repository = "antage/ut181a" }
