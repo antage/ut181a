@@ -39,4 +39,4 @@ fn main() {
 
 This library licensed under the following:
 
-* MIT License ([LICENSE](LICENSE) or http://opensource.org/licenses/MIT)
+* MIT License ([LICENSE](LICENSE) or https://opensource.org/licenses/MIT)
