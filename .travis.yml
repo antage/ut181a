@@ -6,4 +6,4 @@ rust:
   - nightly
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install -qq libusb-1.0-0 libusb-1.0-0-dev
+  - sudo apt-get install -qq libudev-dev libhidapi-dev
