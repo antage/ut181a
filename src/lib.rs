@@ -21,7 +21,6 @@ mod rec_info;
 mod rec_data;
 mod utils;
 
-use std::borrow::Cow;
 use std::time::{Duration, Instant};
 use std::vec::Vec;
 
@@ -37,55 +36,6 @@ pub use range::Range;
 pub use unit::{Unit, UnitExp};
 pub use rec_info::RecordInfo;
 pub use rec_data::RecordDataItem;
-
-pub struct DmmEnumerator {
-    api: hidapi::HidApi,
-}
-
-impl DmmEnumerator {
-    /// Returns a new enumerator instance.
-    pub fn new() -> Result<DmmEnumerator> {
-        Ok(DmmEnumerator {
-            api: hidapi::HidApi::new().map_err(|err| ErrorKind::HidInitialization(err))?,
-        })
-    }
-
-    /// Returns a device path of connected DMM.
-    pub fn enumerate(&self) -> Vec<String> {
-        let serial_numbers = self.api.devices().into_iter().filter_map(|device| {
-            if device.vendor_id == 0x10C4 && device.product_id == 0xEA80 {
-                Some(device.path)
-            } else {
-                None
-            }
-        });
-        serial_numbers.collect()
-    }
-
-    /// Returns a new `Dmm` instance by device path.
-    pub fn open<'a, S>(&self, path: S) -> Result<Dmm>
-    where
-        S: Into<Cow<'a, str>>,
-    {
-        let device = self.api
-            .open_path(&path.into())
-            .map_err(|err| ErrorKind::Open(err))?;
-        Dmm::new(device)
-    }
-
-    /// Returns first found `Dmm`.
-    pub fn open_first(&self) -> Result<Dmm> {
-        for device in self.api.devices() {
-            if device.vendor_id == 0x10C4 && device.product_id == 0xEA80 {
-                let device = self.api
-                    .open_path(&device.path)
-                    .map_err(|err| ErrorKind::Open(err))?;
-                return Dmm::new(device);
-            }
-        }
-        Err(Error::from(ErrorKind::NoDmmFound))
-    }
-}
 
 const RX_BUF_LENGTH: usize = 4096; // it should be 2.5KB at least
 const WAIT_TIMEOUT: u64 = 5000; // 5 seconds
