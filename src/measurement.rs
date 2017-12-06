@@ -16,49 +16,61 @@ enum MeasurementKind {
     Peak,
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
+pub struct NormalMeasurement {
+    pub mode: Mode,
+    pub is_holded: bool,
+    pub is_auto_range: bool,
+    pub range: Range,
+    pub main: Value,
+    pub aux1: Option<Value>,
+    pub aux2: Option<Value>,
+    pub fast: Option<Value>,
+}
+
+#[derive(Clone, Debug)]
+pub struct RelativeMeasurement {
+    pub mode: Mode,
+    pub is_holded: bool,
+    pub is_auto_range: bool,
+    pub range: Range,
+    pub relative: Value,
+    pub reference: Value,
+    pub measurement: Value,
+    pub fast: Option<Value>,
+}
+
+#[derive(Clone, Debug)]
+pub struct MinMaxMeasurement {
+    pub mode: Mode,
+    pub is_holded: bool,
+    pub is_auto_range: bool,
+    pub range: Range,
+    pub main: Value,
+    pub max: Value,
+    pub max_time: Duration,
+    pub average: Value,
+    pub average_time: Duration,
+    pub min: Value,
+    pub min_time: Duration,
+}
+
+#[derive(Clone, Debug)]
+pub struct PeakMeasurement {
+    pub mode: Mode,
+    pub is_holded: bool,
+    pub is_auto_range: bool,
+    pub range: Range,
+    pub min: Value,
+    pub max: Value,
+}
+
+#[derive(Clone, Debug)]
 pub enum Measurement {
-    Normal {
-        mode: Mode,
-        is_holded: bool,
-        is_auto_range: bool,
-        range: Range,
-        main: Value,
-        aux1: Option<Value>,
-        aux2: Option<Value>,
-        fast: Option<Value>,
-    },
-    Relative {
-        mode: Mode,
-        is_holded: bool,
-        is_auto_range: bool,
-        range: Range,
-        relative: Value,
-        reference: Value,
-        measurement: Value,
-        fast: Option<Value>,
-    },
-    MinMax {
-        mode: Mode,
-        is_holded: bool,
-        is_auto_range: bool,
-        range: Range,
-        main: Value,
-        max: Value,
-        max_time: Duration,
-        average: Value,
-        average_time: Duration,
-        min: Value,
-        min_time: Duration,
-    },
-    Peak {
-        mode: Mode,
-        is_holded: bool,
-        is_auto_range: bool,
-        range: Range,
-        min: Value,
-        max: Value,
-    },
+    Normal(NormalMeasurement),
+    Relative(RelativeMeasurement),
+    MinMax(MinMaxMeasurement),
+    Peak(PeakMeasurement),
 }
 
 fn read_duration(data: &[u8]) -> Duration {
@@ -110,7 +122,7 @@ impl Measurement {
                     None
                 };
 
-                Ok(Measurement::Normal {
+                Ok(Measurement::Normal(NormalMeasurement {
                     mode,
                     is_holded,
                     is_auto_range,
@@ -119,7 +131,7 @@ impl Measurement {
                     aux1,
                     aux2,
                     fast,
-                })
+                }))
             }
             MeasurementKind::Relative => {
                 let relative = Value::from_bin_with_precision_and_unit(&data[5..])?;
@@ -133,7 +145,7 @@ impl Measurement {
                     None
                 };
 
-                Ok(Measurement::Relative {
+                Ok(Measurement::Relative(RelativeMeasurement {
                     mode,
                     is_holded,
                     is_auto_range,
@@ -142,7 +154,7 @@ impl Measurement {
                     reference,
                     measurement,
                     fast,
-                })
+                }))
             }
             MeasurementKind::MinMax => {
                 let unit = UnitExp::from_bin(&data[37..])?;
@@ -154,7 +166,7 @@ impl Measurement {
                 let min = Value::from_bin_with_precision(&data[28..], unit)?;
                 let min_time = read_duration(&data[33..]);
 
-                Ok(Measurement::MinMax {
+                Ok(Measurement::MinMax(MinMaxMeasurement {
                     mode,
                     is_holded,
                     is_auto_range,
@@ -166,20 +178,20 @@ impl Measurement {
                     average_time,
                     min,
                     min_time,
-                })
+                }))
             }
             MeasurementKind::Peak => {
                 let max = Value::from_bin_with_precision_and_unit(&data[5..])?;
                 let min = Value::from_bin_with_precision_and_unit(&data[18..])?;
 
-                Ok(Measurement::Peak {
+                Ok(Measurement::Peak(PeakMeasurement {
                     mode,
                     is_holded,
                     is_auto_range,
                     range,
                     min,
                     max,
-                })
+                }))
             }
         }
     }

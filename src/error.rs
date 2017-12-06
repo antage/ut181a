@@ -3,6 +3,10 @@ error_chain! {
         UartError(::cp211x_uart::Error);
     }
     errors {
+        OutOfRange {
+            description("Argument is out of range")
+            display("argument is out of range")
+        }
         CommandWrite(cmd: &'static str) {
             description("Command writing error")
             display("can't write command '{}' to DMM", cmd)

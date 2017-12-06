@@ -6,7 +6,7 @@ use error::*;
 use unit::UnitExp;
 
 /// Measured value.
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Debug)]
 pub struct Value {
     /// Is `value` under negative limit?
     pub overload_neg: bool,

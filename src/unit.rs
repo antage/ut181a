@@ -5,7 +5,7 @@ use utils::read_stringz;
 
 /// Measurement unit.
 #[allow(non_camel_case_types)]
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Unit {
     /// Volts, direct current
     VDC,

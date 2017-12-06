@@ -78,7 +78,7 @@ impl Dmm {
     }
 
     /// Save current measurement in DMM memory.
-    pub fn save(&mut self) -> Result<()> {
+    pub fn save_measurement(&mut self) -> Result<()> {
         let cmd = Packet::new(&[0x06]);
         self.uart
             .write(&cmd.frame())
@@ -88,18 +88,18 @@ impl Dmm {
     }
 
     /// Get saved measurement count.
-    pub fn save_count(&mut self) -> Result<u16> {
+    pub fn get_saved_measurement_count(&mut self) -> Result<u16> {
         let cmd = Packet::new(&[0x08]);
         self.uart
             .write(&cmd.frame())
-            .chain_err(|| ErrorKind::CommandWrite("GET_SAVES_COUNT"))?;
+            .chain_err(|| ErrorKind::CommandWrite("GET_SAVE_COUNT"))?;
 
         let reply = self.wait_reply(0x08)?;
         Ok(LittleEndian::read_u16(&reply))
     }
 
     /// Get saved measurement.
-    pub fn read_save(&mut self, n: u16) -> Result<(NaiveDateTime, Measurement)> {
+    pub fn get_saved_measurement(&mut self, n: u16) -> Result<(NaiveDateTime, Measurement)> {
         let mut cmd: [u8; 3] = [0x07, 0x00, 0x00];
         LittleEndian::write_u16(&mut cmd[1..], n);
         let pkt = Packet::new(&cmd);
@@ -116,7 +116,11 @@ impl Dmm {
     /// Delete saved measurement.
     ///
     /// `index` - save ID (1..0xFFFE).
-    pub fn delete_save(&mut self, index: u16) -> Result<()> {
+    pub fn delete_saved_measurement(&mut self, index: u16) -> Result<()> {
+        if index < 1 || index > 0xFFFE {
+            return Err(ErrorKind::OutOfRange.into());
+        }
+
         let mut cmd: [u8; 3] = [0x09, 0x00, 0x00];
         LittleEndian::write_u16(&mut cmd[1..], index);
         let pkt = Packet::new(&cmd);
@@ -129,12 +133,15 @@ impl Dmm {
     }
 
     /// Delete all saved measurements.
-    pub fn delete_all_save(&mut self) -> Result<()> {
-        self.delete_save(0xFFFF)
+    pub fn delete_all_saved_measurement(&mut self) -> Result<()> {
+        self.delete_saved_measurement(0xFFFF)
     }
 
     /// Turn on/off Min/Max mode.
-    pub fn min_max_mode(&mut self, on: bool) -> Result<()> {
+    ///
+    /// To reset min/max/average values,
+    /// invoke `set_min_max_mode(true)` again.
+    pub fn set_min_max_mode(&mut self, on: bool) -> Result<()> {
         let cmd = if on {
             Packet::new(&[0x04, 0x01])
         } else {
@@ -142,7 +149,7 @@ impl Dmm {
         };
         self.uart
             .write(&cmd.frame())
-            .chain_err(|| ErrorKind::CommandWrite("TOGGLE_MIN_MAX_MODE"))?;
+            .chain_err(|| ErrorKind::CommandWrite("SET_MIN_MAX_MODE"))?;
 
         self.wait_success()
     }
@@ -185,7 +192,7 @@ impl Dmm {
     }
 
     /// Get record count.
-    pub fn record_count(&mut self) -> Result<u16> {
+    pub fn get_record_count(&mut self) -> Result<u16> {
         let cmd = Packet::new(&[0x0E]);
         self.uart
             .write(&cmd.frame())
@@ -196,7 +203,12 @@ impl Dmm {
     }
 
     /// Get record info.
-    pub fn record_info(&mut self, i: u16) -> Result<RecordInfo> {
+    ///
+    /// `i` is index of record (starting from 1).
+    pub fn get_record_info(&mut self, i: u16) -> Result<RecordInfo> {
+        if i < 1 {
+            return Err(ErrorKind::OutOfRange.into());
+        }
         let mut cmd: [u8; 3] = [0x0C, 0x00, 0x00];
         LittleEndian::write_u16(&mut cmd[1..], i);
         let pkt = Packet::new(&cmd);
@@ -209,10 +221,14 @@ impl Dmm {
     }
 
     /// Get record samples.
-    /// `i` is record index (starting from 1).
-    pub fn record_data(&mut self, i: u16) -> Result<Vec<RecordDataItem>> {
+    ///
+    /// `i` is index of record (starting from 1).
+    pub fn get_record_data(&mut self, i: u16) -> Result<Vec<RecordDataItem>> {
+        if i < 1 {
+            return Err(ErrorKind::OutOfRange.into());
+        }
         let mut offset = 1;
-        let info = self.record_info(i)?;
+        let info = self.get_record_info(i)?;
         let mut items: Vec<RecordDataItem> = Vec::new();
         let mut cmd: [u8; 7] = [0x0D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00];
         LittleEndian::write_u16(&mut cmd[1..], i);
@@ -301,7 +317,7 @@ impl Dmm {
     ///
     /// This function blocks thread until to read a message
     /// or exceeds `WAIT_TIMEOUT` duration.
-    pub fn read_measurement(&mut self) -> Result<Measurement> {
+    pub fn get_measurement(&mut self) -> Result<Measurement> {
         self.wait_measurement()
     }
 
