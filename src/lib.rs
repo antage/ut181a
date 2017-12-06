@@ -9,9 +9,9 @@ extern crate hid;
 #[macro_use]
 extern crate nom;
 
-pub mod error;
+mod error;
 use error::*;
-pub use error::Error;
+pub use error::{Error, ErrorKind};
 
 mod packet;
 mod range;
