@@ -7,7 +7,7 @@ It supports USB connection only.
 
 ## Documentation
 
-API documentation: https://docs.rs.ut181a
+API documentation is [here](https://docs.rs/ut181a).
 
 ## Building
 
