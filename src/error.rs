@@ -1,20 +1,11 @@
 error_chain! {
+    foreign_links {
+        UartError(::cp211x_uart::Error);
+    }
     errors {
-        HidInitialization(err: &'static str) {
-            description("HID API initialization error")
-            display("HID API initialization failed ({})", err)
-        }
-        Open(err: &'static str) {
-            description("DMM opening error")
-            display("can't open DMM device ({})", err)
-        }
-        NoDmmFound {
-            description("No DMM found error")
-            display("no DMM is found")
-        }
-        CommandWrite(err: &'static str) {
+        CommandWrite(cmd: &'static str) {
             description("Command writing error")
-            display("can't write command to DMM ({})", err)
+            display("can't write command '{}' to DMM", cmd)
         }
         CommandError {
             description("Command execution error")

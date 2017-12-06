@@ -1,14 +1,17 @@
+#![recursion_limit="128"]
+
 extern crate byteorder;
 extern crate chrono;
 extern crate cp211x_uart;
 #[macro_use]
 extern crate error_chain;
-extern crate hidapi;
+extern crate hid;
 #[macro_use]
 extern crate nom;
 
 pub mod error;
 use error::*;
+pub use error::Error;
 
 mod packet;
 mod range;
@@ -40,14 +43,14 @@ pub use rec_data::RecordDataItem;
 const RX_BUF_LENGTH: usize = 4096; // it should be 2.5KB at least
 const WAIT_TIMEOUT: u64 = 5000; // 5 seconds
 
-pub struct Dmm<'a> {
-    uart: cp211x_uart::HidUart<'a>,
+pub struct Dmm {
+    uart: cp211x_uart::HidUart,
     rx_buf: Vec<u8>,
 }
 
-impl<'a> Dmm<'a> {
-    fn new(device: hidapi::HidDevice) -> Result<Dmm> {
-        let mut uart = cp211x_uart::HidUart::new(device)?;
+impl Dmm {
+    pub fn new(handle: hid::Handle) -> Result<Dmm> {
+        let mut uart = cp211x_uart::HidUart::new(handle)?;
         uart.set_read_timeout(Duration::from_millis(100));
         uart.set_write_timeout(Duration::from_millis(500));
         uart.set_config(&cp211x_uart::UartConfig {
@@ -69,7 +72,7 @@ impl<'a> Dmm<'a> {
         let cmd = Packet::new(&[0x12, 0x5A]);
         self.uart
             .write(&cmd.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("TOGGLE_HOLD"))?;
 
         self.wait_success()
     }
@@ -79,7 +82,7 @@ impl<'a> Dmm<'a> {
         let cmd = Packet::new(&[0x06]);
         self.uart
             .write(&cmd.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("SAVE"))?;
 
         self.wait_success()
     }
@@ -89,7 +92,7 @@ impl<'a> Dmm<'a> {
         let cmd = Packet::new(&[0x08]);
         self.uart
             .write(&cmd.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("GET_SAVES_COUNT"))?;
 
         let reply = self.wait_reply(0x08)?;
         Ok(LittleEndian::read_u16(&reply))
@@ -103,7 +106,7 @@ impl<'a> Dmm<'a> {
 
         self.uart
             .write(&pkt.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("GET_SAVE"))?;
 
         let (datetime, measurement) = self.wait_save()?;
 
@@ -120,7 +123,7 @@ impl<'a> Dmm<'a> {
 
         self.uart
             .write(&pkt.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("DELETE_SAVE"))?;
 
         self.wait_success()
     }
@@ -139,7 +142,7 @@ impl<'a> Dmm<'a> {
         };
         self.uart
             .write(&cmd.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("TOGGLE_MIN_MAX_MODE"))?;
 
         self.wait_success()
     }
@@ -152,7 +155,7 @@ impl<'a> Dmm<'a> {
         let cmd = Packet::new(&[0x02, b]);
         self.uart
             .write(&cmd.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("SET_RANGE"))?;
 
         self.wait_success()
     }
@@ -164,7 +167,7 @@ impl<'a> Dmm<'a> {
         let pkt = Packet::new(&cmd);
         self.uart
             .write(&pkt.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("SET_REFERENCE"))?;
 
         self.wait_success()
     }
@@ -176,7 +179,7 @@ impl<'a> Dmm<'a> {
         let pkt = Packet::new(&cmd);
         self.uart
             .write(&pkt.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("SET_MODE"))?;
 
         self.wait_success()
     }
@@ -186,7 +189,7 @@ impl<'a> Dmm<'a> {
         let cmd = Packet::new(&[0x0E]);
         self.uart
             .write(&cmd.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("GET_RECORDS_COUNT"))?;
 
         let reply = self.wait_reply(0x0E)?;
         Ok(LittleEndian::read_u16(&reply))
@@ -199,7 +202,7 @@ impl<'a> Dmm<'a> {
         let pkt = Packet::new(&cmd);
         self.uart
             .write(&pkt.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("GET_RECORD_INFO"))?;
 
         let reply = self.wait_record_info()?;
         Ok(reply)
@@ -218,7 +221,7 @@ impl<'a> Dmm<'a> {
             let pkt = Packet::new(&cmd);
             self.uart
                 .write(&pkt.frame())
-                .map_err(|err| ErrorKind::CommandWrite(err))?;
+                .chain_err(|| ErrorKind::CommandWrite("GET_RECORD_DATA"))?;
 
             let raw_items = self.wait_record_data()?;
             let raw_items_count = raw_items.len();
@@ -248,7 +251,7 @@ impl<'a> Dmm<'a> {
         let pkt = Packet::new(&[0x05, 0x01]);
         self.uart
             .write(&pkt.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("MONITOR_ON"))?;
 
         self.wait_measurement()?;
         Ok(())
@@ -259,7 +262,7 @@ impl<'a> Dmm<'a> {
         let pkt = Packet::new(&[0x05, 0x00]);
         self.uart
             .write(&pkt.frame())
-            .map_err(|err| ErrorKind::CommandWrite(err))?;
+            .chain_err(|| ErrorKind::CommandWrite("MONITOR_OFF"))?;
 
         self.wait_success_or_measurement()?;
         Ok(())
