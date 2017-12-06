@@ -1,6 +1,6 @@
 # ut181a
 
-[![Documentation](https://docs.rs/ut181a/badge.svg)](https://docs.rs/ut181a)
+[![Documentation](https://docs.rs/ut181a/badge.svg)](https://docs.rs/ut181a) [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)] [![Build Status](https://travis-ci.org/antage/ut181a.svg?branch=master)](https://travis-ci.org/antage/ut181a)
 
 Uni-T UT181A digital multimeter (DMM) remote control library.
 It supports USB connection only.
