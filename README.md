@@ -32,19 +32,35 @@ $ cargo build --features build
 ## Usage
 
 ``` rust
-extern ut181a;
+extern crate hid;
+extern crate ut181a;
 
-use ut181a::DmmEnumerator;
+use ut181a::{Dmm, Measurement};
+
+fn run() -> Result<(), ut181a::Error> {
+    let manager = hid::init()?;
+    for device in manager.find(Some(0x10C4), Some(0xEA80)) {
+        let mut dmm = Dmm::new(device.open()?)?;
+
+        dmm.monitor_on()?;
+        for _ in 1..10 {
+            let m: Measurement = dmm.get_measurement()?;
+            println!("{:?}", m);
+        }
+        dmm.monitor_off()?;
+
+        break;
+    }
+    Ok(())
+}
 
 fn main() {
-    // Don't use `unwrap()` in a production code!
-    let enumerator = DmmEnumerator::new().unwrap();
-    let mut dmm = enumerator.open_first().unwrap();
-
-    dmm.monitor_on().unwrap();
-    let measurement = dmm.read_measurement().unwrap();
-    println!("Got measurement: {:?}", measurement);
-    dmm.monitor_off().unwrap();
+    match run() {
+        Err(err) => {
+            eprintln!("ERROR: {}", err);
+        }
+        _ => {}
+    }
 }
 ```
 
