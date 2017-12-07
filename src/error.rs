@@ -1,5 +1,6 @@
 error_chain! {
     foreign_links {
+        HidError(::hid::Error);
         UartError(::cp211x_uart::Error);
     }
     errors {
