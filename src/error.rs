@@ -24,6 +24,22 @@ error_chain! {
             description("Invalid date and time")
             display("invalid date and/or time ({}/{}/{} {}:{}:{})", year, month, day, hour, minute, second)
         }
+        RecordNameTooLong(name: String) {
+            description("Record name length exceeds 10 characters")
+            display("record name length exceeds 10 characters: '{}'", name)
+        }
+        InvalidRecordName(name: String) {
+            description("Invalid record name (printable ASCII characters are allowed only)")
+            display("invalid record name (printable ASCII characters are allowed only): '{}'", name)
+        }
+        RecordIntervalIsOutOfRange(interval: u16) {
+            description("Record interval is out of range (1..3600 second(s))")
+            display("record interval is out of range (1..3600 second(s)): {}", interval)
+        }
+        RecordDurationIsOutOfRange(duration: u32) {
+            description("Record duration is out of range (1..143999 minute(s))")
+            display("record interval is out of range (1..143999 minute(s)): {}", duration)
+        }
         UnknownReplyCode(code: u16) {
             description("Unknown reply code")
             display("unknown reply code (0x{:04X})", code)

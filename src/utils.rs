@@ -25,3 +25,7 @@ pub(crate) fn read_datetime(data: &[u8]) -> Result<NaiveDateTime> {
         },
     }
 }
+
+pub(crate) fn allowed_char(c: char) -> bool {
+    (c as u32) >= 0x20 && (c as u32) <= 0x7E
+}

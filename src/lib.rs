@@ -264,6 +264,54 @@ impl Dmm {
         }
     }
 
+    /// Start new recording
+    /// with `name` (printable ASCII characters are allowed, 10 characters is maximum),
+    /// `interval` in seconds (1..3600 second(s)),
+    /// and `duration` in minutes (1..143999 minute(s)).
+    pub fn start_record(&mut self, name: &str, interval: u16, duration: u32) -> Result<()> {
+        for c in name.chars() {
+            if !utils::allowed_char(c) {
+                return Err(ErrorKind::InvalidRecordName(name.into()).into());
+            }
+    }
+        if name.len() > 10 {
+            return Err(ErrorKind::RecordNameTooLong(name.into()).into());
+        }
+        if interval < 1 || interval > 3600 {
+            return Err(ErrorKind::RecordIntervalIsOutOfRange(interval).into());
+        }
+        if duration < 1 || duration > 143999 {
+            return Err(ErrorKind::RecordDurationIsOutOfRange(duration).into());
+        }
+
+        let mut cmd: [u8; 18] = [0; 18];
+        cmd[0] = 0x0A;
+        let name_bytes = name.as_bytes();
+        cmd[1..(name_bytes.len() + 1)].copy_from_slice(name.as_bytes());
+
+        LittleEndian::write_u16(&mut cmd[12..], interval);
+        LittleEndian::write_u32(&mut cmd[14..], duration);
+
+        let pkt = Packet::new(&cmd);
+        self.uart
+            .write(&pkt.frame())
+            .chain_err(|| ErrorKind::CommandWrite("RECORD_START"))?;
+
+        self.wait_success()?;
+
+        Ok(())
+    }
+
+    /// Stop current recording.
+    pub fn stop_record(&mut self) -> Result<()> {
+        let pkt = Packet::new(&[0x0B]);
+        self.uart
+            .write(&pkt.frame())
+            .chain_err(|| ErrorKind::CommandWrite("RECORD_STOP"))?;
+        self.wait_success()?;
+        Ok(())
+    }
+
     /// Turn on monitoring mode.
     pub fn monitor_on(&mut self) -> Result<()> {
         let pkt = Packet::new(&[0x05, 0x01]);
