@@ -1,4 +1,4 @@
-#![recursion_limit="128"]
+#![recursion_limit = "128"]
 
 extern crate byteorder;
 extern crate chrono;
@@ -244,8 +244,10 @@ impl Dmm {
             if raw_items_count == 0 {
                 return Ok(items);
             }
-            items.extend(raw_items.into_iter().map(
-                |item: message::RawRecordDataItem| {
+            items.extend(
+                raw_items
+                    .into_iter()
+                    .map(|item: message::RawRecordDataItem| {
                     RecordDataItem {
                         value: Value {
                             overload_neg: item.overload_neg,
@@ -256,8 +258,8 @@ impl Dmm {
                         },
                         timestamp: item.timestamp,
                     }
-                },
-            ));
+                    }),
+            );
             offset += raw_items_count;
         }
     }
