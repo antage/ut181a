@@ -18,10 +18,5 @@ error-chain = "^0.11.0"
 hid = "^0.4.1"
 nom = "^3.2.1"
 
-[features]
-default = []
-static = ["hid/static"]
-build = ["static", "hid/build"]
-
 [badges]
 travis-ci = { repository = "antage/ut181a" }
