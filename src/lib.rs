@@ -33,7 +33,8 @@ use chrono::NaiveDateTime;
 use packet::Packet;
 use message::Message;
 pub use value::Value;
-pub use measurement::Measurement;
+pub use measurement::{Measurement, MinMaxMeasurement, NormalMeasurement, PeakMeasurement,
+                      RelativeMeasurement};
 pub use mode::Mode;
 pub use range::Range;
 pub use unit::{Unit, UnitExp};
@@ -248,16 +249,16 @@ impl Dmm {
                 raw_items
                     .into_iter()
                     .map(|item: message::RawRecordDataItem| {
-                    RecordDataItem {
-                        value: Value {
-                            overload_neg: item.overload_neg,
-                            overload_pos: item.overload_pos,
-                            value: item.value,
-                            precision: Some(item.precision),
-                            unit: info.unit,
-                        },
-                        timestamp: item.timestamp,
-                    }
+                        RecordDataItem {
+                            value: Value {
+                                overload_neg: item.overload_neg,
+                                overload_pos: item.overload_pos,
+                                value: item.value,
+                                precision: Some(item.precision),
+                                unit: info.unit,
+                            },
+                            timestamp: item.timestamp,
+                        }
                     }),
             );
             offset += raw_items_count;
@@ -273,7 +274,7 @@ impl Dmm {
             if !utils::allowed_char(c) {
                 return Err(ErrorKind::InvalidRecordName(name.into()).into());
             }
-    }
+        }
         if name.len() > 10 {
             return Err(ErrorKind::RecordNameTooLong(name.into()).into());
         }
