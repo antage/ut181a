@@ -38,8 +38,9 @@ A measurement packet has 4 formats:
 |-------:|-------------|
 | 0      | Positive overload (0: no, 1: overload). |
 | 1      | Negative overload (0: no, 1: overload). |
-| 2..3   | Data is not ready (0: ready, >0: not ready). |
 | 4..7   | A number of digits after decimal point. |
+
+Positive and negative overloads aren't mutually exclusive and can be simultaneously.
 
 ### Normal measurement
 
