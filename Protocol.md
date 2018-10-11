@@ -14,7 +14,7 @@ A measurement packet has 4 formats:
 | offset | size | description |
 |-------:|-----:|-------------|
 | 0      | 1    | Misc byte (see below) |
-| 1      | 1    | Auto range (0x00: off, 0x01: on) |
+| 1      | 1    | Misc2 byte (0x00: off, 0x01: on) |
 | 2      | 2    | Mode |
 | 4      | 1    | Range |
 
@@ -31,6 +31,17 @@ A measurement packet has 4 formats:
 |        |   2: min/max |
 |        |   4: peak |
 | 7      | Hold (0: off, 1: on). |
+
+### Misc2 byte
+
+| bit(s) | description |
+|-------:|-------------|
+| 0      | Auto range |
+| 1      | High voltage |
+| 3      | Lead error |
+| 4      | Comp mode |
+| 5      | Record mode |
+
 
 ### Precision byte
 
