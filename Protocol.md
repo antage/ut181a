@@ -1,5 +1,49 @@
 # UT181A protocol
 
+## Frame format
+
+All data (sent and received) is packed in frames.
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 2    | Magic signature (0xCDAB). |
+| 2      | 2    | A number of bytes in payload and checksum (N + 2). |
+| 4      | N    | Payload. |
+| 4 + N  | 2    | Checksum (C). |
+
+The checksum is 16-bit unsigned integer.
+
+C = 2 + N + (sum of bytes in payload)
+
+## Received data
+
+Payload format for received data:
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | Kind of packet (see below). |
+| 1      | M    | A packet. |
+
+Kind of packet:
+
+| value | description |
+|------:|-------------|
+| 0x01  | Reply code packet. |
+| 0x02  | Measurement packet. |
+| 0x03  | Save packet. |
+| 0x04  | Record info packet. |
+| 0x05  | Record data packet. |
+| 0x72  | Reply data packet (saves count, records count, etc). |
+
+## Reply code packet
+
+It contains 2 bytes.
+
+| value | description |
+|------:|-------------|
+| 0x4B4F | OK (success). |
+| 0x5245 | ER (error). |
+
 ## Measurement packet
 
 A measurement packet has 4 formats:
@@ -121,3 +165,21 @@ should be shifted.
 | 18     | 4    | Min value (float32). |
 | 22     | 1    | Min value's precision byte (see above). |
 | 23     | 8    | 0-terminated string consists a unit of measurement. |
+
+## Save packet
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 4    | Date/time (see below). |
+| 5      | N    | Measurement packet. |
+
+### Date/time format
+
+| bit(s) | description |
+|-------:|-------------|
+| 0..5   | Year - 2000 |
+| 6..9   | Month |
+| 10..14 | Day |
+| 15..19 | Hour |
+| 20..25 | Minute |
+| 26..31 | Second |
