@@ -86,6 +86,89 @@ A measurement packet has 4 formats:
 | 4      | Comp mode |
 | 5      | Record mode |
 
+### Mode word
+
+| value  | mode / submode |
+|-------:|----------------|
+| 0x1111 | VAC/normal |
+| 0x1112 | VAC/normal relative |
+| 0x1121 | VAC/Hz |
+| 0x1131 | VAC/peak |
+| 0x1141 | VAC/low pass |
+| 0x1142 | VAC/low pass relative |
+| 0x1151 | VAC/dBV |
+| 0x1152 | VAC/dBV relative |
+| 0x1161 | VAC/dBm |
+| 0x1162 | VAC/dBm relative |
+| 0x2111 | mVAC/normal |
+| 0x2112 | mVAC/normal relative |
+| 0x2121 | mVAC/Hz |
+| 0x2131 | mVAC/peak |
+| 0x2141 | mVAC/AC+DC |
+| 0x2142 | mVAC/AC+DC relative |
+| 0x3111 | VDC/normal |
+| 0x3112 | VDC/normal relative |
+| 0x3121 | VDC/AC+DC |
+| 0x3122 | VDC/AC+DC relative |
+| 0x3131 | VDC/peak |
+| 0x4111 | mVDC/normal |
+| 0x4112 | mVDC/normal relative |
+| 0x4121 | mVDC/peak |
+| 0x4211 | TempC/T1,T2 |
+| 0x4212 | TempC/T1,T2 relative |
+| 0x4221 | TempC/T2,T1 |
+| 0x4222 | TempC/T2,T1 relative |
+| 0x4231 | TempC/T1-T2 |
+| 0x4241 | TempC/T2-T1 |
+| 0x4311 | TempF/T1,T2 |
+| 0x4312 | TempF/T1,T2 relative |
+| 0x4321 | TempF/T2,T1 |
+| 0x4322 | TempF/T2,T1 relative |
+| 0x4331 | TempF/T1-T2 |
+| 0x4341 | TempF/T2-T1 |
+| 0x5111 | Resistance |
+| 0x5112 | Resistance relative |
+| 0x5211 | Beeper/Short |
+| 0x5212 | Beeper/Open |
+| 0x5311 | Admittance |
+| 0x5312 | Admittance relative |
+| 0x6111 | Diode/Normal |
+| 0x6112 | Diode/Alarm |
+| 0x6211 | Capacitance |
+| 0x6212 | Capacitance realative |
+| 0x7111 | Frequency |
+| 0x7112 | Frequency relative |
+| 0x7211 | Duty cycle |
+| 0x7212 | Duty cycle relative |
+| 0x7311 | Pulse width |
+| 0x7312 | Pulse width relative |
+| 0x8111 | uADC/normal |
+| 0x8112 | uADC/normal relative |
+| 0x8121 | uADC/AC+DC |
+| 0x8122 | uADC/AC+DC relative |
+| 0x8131 | uADC/peak |
+| 0x8211 | uAAC/normal |
+| 0x8212 | uAAC/normal relative |
+| 0x8221 | uAAC/Hz |
+| 0x8231 | uAAC/peak |
+| 0x9111 | mADC/normal |
+| 0x9112 | mADC/normal relative |
+| 0x9121 | mADC/AC+DC |
+| 0x9122 | mADC/AC+DC relative |
+| 0x9131 | mADC/peak |
+| 0x9211 | mAAC/normal |
+| 0x9212 | mAAC/normal relative |
+| 0x9221 | mAAC/Hz |
+| 0x9231 | mAAC/peak |
+| 0xA111 | ADC/normal |
+| 0xA112 | ADC/normal relative |
+| 0xA121 | ADC/AC+DC |
+| 0xA122 | ADC/AC+DC relative |
+| 0xA131 | ADC/peak |
+| 0xA211 | AAC/normal |
+| 0xA212 | AAC/normal relative |
+| 0xA221 | AAC/Hz |
+| 0xA231 | AAC/peak |
 
 ### Precision byte
 
