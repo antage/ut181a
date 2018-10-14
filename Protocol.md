@@ -59,8 +59,8 @@ A measurement packet has 4 formats:
 |-------:|-----:|-------------|
 | 0      | 1    | Misc byte (see below). |
 | 1      | 1    | Misc2 byte (see below). |
-| 2      | 2    | Mode. |
-| 4      | 1    | Range. |
+| 2      | 2    | Mode word (see below). |
+| 4      | 1    | Range byte (see below). |
 
 ### Misc byte
 
@@ -169,6 +169,20 @@ A measurement packet has 4 formats:
 | 0xA212 | AAC/normal relative |
 | 0xA221 | AAC/Hz |
 | 0xA231 | AAC/peak |
+
+### Range byte
+
+| value | description |
+|------:|-------------|
+| 0x00  | Auto range |
+| 0x01  | 60 mV/6 V/600 uA/60 mA/600 Ohm/60 Hz/6 nF |
+| 0x02  | 600 mV/60 V/6000 uA/600 mA/6 KOhm/600 Hz/60 nF |
+| 0x03  | 600V/60 KOhm/6 KHz/600 nF |
+| 0x04  | 1000 V/600 KOhm/60 KHz/6 uF |
+| 0x05  | 6 MOhm/600 KHz/60 uF |
+| 0x06  | 60 MOhm/6 MHz/600 uF |
+| 0x07  | 60 MHz/6 mF |
+| 0x08  | 60 mF |
 
 ### Precision byte
 
