@@ -57,10 +57,10 @@ A measurement packet has 4 formats:
 
 | offset | size | description |
 |-------:|-----:|-------------|
-| 0      | 1    | Misc byte (see below) |
-| 1      | 1    | Misc2 byte (0x00: off, 0x01: on) |
-| 2      | 2    | Mode |
-| 4      | 1    | Range |
+| 0      | 1    | Misc byte (see below). |
+| 1      | 1    | Misc2 byte (see below). |
+| 2      | 2    | Mode. |
+| 4      | 1    | Range. |
 
 ### Misc byte
 
