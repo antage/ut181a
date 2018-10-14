@@ -280,3 +280,31 @@ should be shifted.
 | 15..19 | Hour |
 | 20..25 | Minute |
 | 26..31 | Second |
+
+## Record info packet
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 11   | 0-terminated string, name of record. |
+| 11     | 8    | 0-terminated string, unit of measurements. |
+| 19     | 2    | sampling interval in seconds. |
+| 21     | 4    | duration of record in seconds. |
+| 25     | 4    | a number of samples. |
+| 29     | 4    | max value (float32). |
+| 33     | 1    | max value's precision byte. |
+| 34     | 4    | average value (float32). |
+| 38     | 1    | average value's precision byte. |
+| 39     | 4    | min value (float32). |
+| 43     | 1    | min value's precision byte. |
+| 44     | 4    | record beginning date/time (see 'Date/time format'). |
+
+## Record data packet
+
+| offset  | size | description |
+|--------:|-----:|-------------|
+| 0       | 1    | a number of samples in the packet (N). |
+| i*9 + 0 | 4    | sample value (float32). |
+| i*9 + 4 | 1    | precision byte. |
+| i*9 + 5 | 4    | sample data/time (see 'Date/time format'). |
+
+`i` is 0..N-1.
