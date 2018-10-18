@@ -308,3 +308,127 @@ should be shifted.
 | i*9 + 5 | 4    | sample data/time (see 'Date/time format'). |
 
 `i` is 0..N-1.
+
+## Commands
+
+### Set mode
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x01 |
+| 1      | 2    | mode (uint16, see above) |
+
+### Set range
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x02 |
+| 1      | 1    | range (uint8, see above) |
+
+### Set reference value
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x03 |
+| 1      | 4    | value (float32) |
+
+### Min/max mode on
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x04 |
+| 1      | 4    | 0x01 |
+
+### Min/max mode off
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x04 |
+| 1      | 4    | 0x00 |
+
+### Monitor on
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x05 |
+| 1      | 1    | 0x01 |
+
+### Monitor off
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x05 |
+| 1      | 1    | 0x00 |
+
+### Save measurement
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x06 |
+
+### Get saved measurement
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x07 |
+| 1      | 2    | index (uint16) |
+
+### Get saved measurements count
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x08 |
+
+### Delete saved measurement
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x09 |
+| 1      | 2    | index (uint16) |
+
+If `index` == 0xFFFF it'll delete all saved measurements.
+
+### Start record
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x0A |
+| 1      | 11   | name (0-terminated string) |
+| 12     | 2    | interval (uint16) |
+| 14     | 4    | duration (uint32) |
+
+* `name` can contains ASCII only.
+* `interval` and `duration` unit is a second.
+
+### Stop record
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x0B |
+
+### Get record information
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x0C |
+| 1      | 2    | index (uint16) |
+
+### Get record samples
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x0D |
+| 1      | 2    | index (uint16) |
+| 3      | 4    | samples offset (uint32) |
+
+### Get records count
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 1    | 0x0E |
+
+### Toggle HOLD
+
+| offset | size | description |
+|-------:|-----:|-------------|
+| 0      | 2    | 0x5A12 |
